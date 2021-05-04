@@ -9,7 +9,7 @@ import revpimodio
 import os
 
 RECEIVED_MESSAGES = 0
-CONNECTION_STRING_DEVICE = os.environ("CONNECTION_STRING_DEVICE")
+CONNECTION_STRING_DEVICE = os.environ.get("CONNECTION_STRING_DEVICE")
 
 def message_listener(client):
     global RECEIVED_MESSAGES

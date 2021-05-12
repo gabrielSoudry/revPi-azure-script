@@ -1,47 +1,60 @@
-#!/usr/bin/python3 
+#!/usr/bin/python3
 
-import os
-import asyncio
-import uuid
-from azure.iot.device.aio import IoTHubDeviceClient
-from azure.iot.device import Message
+import random
+import time
+from azure.iot.device import IoTHubDeviceClient, Message
+import os 
+import datetime
 
-messages_to_send = 10
+CONNECTION_STRING = os.environ.get("CONNECTION_STRING_DEVICE")
 
+# Define the JSON message to send to IoT Hub.
+TEMPERATURE = 20.0
+HUMIDITY = 60
+MSG_TXT = '{{"temperature": {temperature},"humidity": {humidity},"count": {count}}}'
+NBR_MESSAGE = 540
+count = 500
 
-async def main():
-    # The connection string for a device should never be stored in code. For the sake of simplicity we're using an environment variable here.
-    conn_str = os.getenv("CONNECTION_STRING_DEVICE")
+def iothub_client_init():
+    # Create an IoT Hub client
+    client = IoTHubDeviceClient.create_from_connection_string(CONNECTION_STRING)
+    return client
 
-    # The client object is used to interact with your Azure IoT hub.
-    device_client = IoTHubDeviceClient.create_from_connection_string(conn_str)
+def iothub_client_telemetry_sample_run():
+    global count
+    try:
+        client = iothub_client_init()
+        print ( "IoT Hub device sending periodic messages, press Ctrl-C to exit" )
 
-    # Connect the client.
-    await device_client.connect()
+        while count < NBR_MESSAGE :
+            # Build the message with simulated telemetry values.
+            temperature = TEMPERATURE + (random.random() * 15)
+            humidity = HUMIDITY + (random.random() * 20)
+            msg_txt_formatted = MSG_TXT.format(temperature=temperature, humidity=humidity, count=count)
+            message = Message(msg_txt_formatted)
+            message.content_encoding = "utf-8"
+            message.content_type = "application/json"
+            
+            # Add a custom application property to the message.
+            # An IoT hub can filter on these properties without access to the message body.
+            if temperature > 30:
+              message.custom_properties["temperatureAlert"] = "true"
+            else:
+              message.custom_properties["temperatureAlert"] = "false"
 
-    async def send_test_message(i):
-        print("sending message #" + str(i))
-        msg = Message("test wind speed " + str(i))
-        msg.message_id = uuid.uuid4()
-        msg.correlation_id = "correlation-1234"
-        msg.custom_properties["tornado-warning"] = "yes"
-        msg.content_encoding = "utf-8"
-        msg.content_type = "application/json"
-        await device_client.send_message(msg)
-        print("done sending message #" + str(i))
+            message.custom_properties["SendingTime"] = datetime.datetime.now()
 
-    # send `messages_to_send` messages in parallel
-    await asyncio.gather(*[send_test_message(i) for i in range(1, messages_to_send + 1)])
+            # Send the message.
+            print( "Sending message: {}".format(message) )
+            client.send_message(message)
+            time.sleep(1)
+            print ( "Message successfully sent" )
+            count += 1
 
-    # Finally, shut down the client
-    await device_client.shutdown()
+    except KeyboardInterrupt:
+        print ( "IoTHubClient sample stopped" )
 
-
-if __name__ == "__main__":
-    asyncio.run(main())
-
-    # If using Python 3.6 or below, use the following code instead of asyncio.run(main()):
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(main())
-    # loop.close()
-
+if __name__ == '__main__':
+    print ( "IoT Hub Quickstart #1 - Simulated device" )
+    print ( "Press Ctrl-C to exit" )
+    iothub_client_telemetry_sample_run()

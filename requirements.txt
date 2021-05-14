@@ -1,3 +1,4 @@
 azure.iot.device
 revpimodio
 revpimodio2
+azure.iot.hub

@@ -29,6 +29,11 @@ And then source it:
 $ source .env
 ```
 
+Install all dependencies: 
+```bash
+$ pip3 install -r requirements.txt
+```
+
 Now you can execute all python script
 
 

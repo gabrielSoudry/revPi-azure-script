@@ -16,6 +16,21 @@
 - ![directory](https://github.com/tpierrain/cqrs/blob/master/images/directory.png?raw=true) __**Device**__: Code hosted on the RevPi
 - ![directory](https://github.com/tpierrain/cqrs/blob/master/images/directory.png?raw=true) __Service__: Code hosted on Microsoft Azure
 
+## Setup
+
+We will need first to setup several env variable. The most easy way to do it, it's to create a .env file at the root level:
+
+```bash
+export CONNECTION_STRING_DEVICE=<HostName=...;DeviceId=...;SharedAccessKey=...>
+export CONNECTION_STRING_SERVICE=<HostName...net;SharedAccessKeyName=...;SharedAccessKey=....">
+```
+And then source it: 
+```bash
+$ source .env
+```
+
+Now you can execute all python script
+
 
 ## Useful links:
 Azure : 

@@ -22,7 +22,8 @@ We will need first to setup several env variable. The most easy way to do it, it
 
 ```bash
 export CONNECTION_STRING_DEVICE=<HostName=...;DeviceId=...;SharedAccessKey=...>
-export CONNECTION_STRING_SERVICE=<HostName...net;SharedAccessKeyName=...;SharedAccessKey=....">
+export CONNECTION_STRING_SERVICE=<HostName...net;SharedAccessKeyName=...;SharedAccessKey=....>
+export IOTHUB_DEVICE_ID=<name of the device>
 ```
 And then source it: 
 ```bash

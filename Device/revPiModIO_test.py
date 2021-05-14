@@ -6,11 +6,7 @@ import revpimodio2
 import time
 
 revpi = revpimodio2.RevPiModIO(autorefresh=True)
-
 revpi.io.Relay.value = True
-
 time.sleep(2)
-
 revpi.io.Relay.value = False
-
 revpi.exit()
